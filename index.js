@@ -38,9 +38,10 @@ app.get("/api/shorturl/:urlCode", function(req, res) {
 })
 
 app.post('/api/shorturl', function(req, res) {
+  const regex = /^(https?:\/\/)?([\da-z\.-]+)(:\d+)?(\/[^\s]*)?$/;
   const original_url = req.body.url;
-  try {
-    new URL(original_url);
+  console.log(original_url)
+  if (regex.test(original_url)){
     const urlCode = shortId.generate();
     const shortUrl = `${req.baseUrl}/${urlCode}`;
     const newUrl = new Url({ longUrl: original_url, shortUrl:shortUrl, urlCode:urlCode });
@@ -51,7 +52,7 @@ app.post('/api/shorturl', function(req, res) {
         .catch((err) => {
           res.json({error: err}).status(404);
         });
-  } catch (err) {
+  } else  {
     res.json({ error: 'invalid url' })
   }
 });
